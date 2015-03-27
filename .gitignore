@@ -1,0 +1,15 @@
+*.pyc
+CVS
+__init__.py
+*~
+*.root
+*.png
+*.ps
+*.stdout
+*.stderr
+*.condor
+*.so
+*.d
+\#*\#
+*.generated
+*.gz
