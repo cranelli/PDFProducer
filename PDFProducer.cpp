@@ -4,13 +4,13 @@
  * and produce weights.
  */
 
+#include "PDFProducer.h"
 #include "LHAPDF/LHAPDF.h"
 #include "TFile.h"
 #include "TChain.h"
 #include "TTree.h"
 #include "TDirectory.h"
 #include "TBranch.h"
-
 #include <iostream>
 #include <fstream>
 
@@ -31,26 +31,30 @@ int main(){
   TFile * outfile  = TFile::Open(outfilepath.c_str(), "RECREATE");
 
   TTree * tree =(TTree*)infile->Get((inRootFileLoc+":ggNtuplizer/EventTree").c_str());
+
   Float_t original_pdf[7];
   TBranch *b_pdf;
   tree->SetBranchAddress("pdf", original_pdf, &b_pdf);
 
   TTree * out_tree = new TTree("out_tree", "Contains Parton Distribution calculations for different PDF Sets");
  
-  map<string,vector<double> > map_xfx;
+  map<string,pair<vector<double>, vector<double> > > map_xfx;
   map<string, vector<LHAPDF::PDF*> > map_pdfs;
 
   //Loop Over PDF Sets
   for( unsigned int i=0; i < setnames.size(); i++){
     
     //Set New Branches
-    vector<double> xfx;
-    map_xfx.insert(pair<string, vector<double> >(setnames[i], xfx));
+    pair<vector<double> , vector<double> > xfx;
+    map_xfx.insert(pair<string, pair< vector<double>, vector<double> > >(setnames[i], xfx));
     
-    stringstream branch_name;
-    branch_name << "xfx_first_" << setnames[i];
-    out_tree->Branch(branch_name.str().c_str(),
-		     "std::vector<double>",&(map_xfx[setnames[i]]));
+    stringstream branch_name_first, branch_name_second;
+    branch_name_first << "xfx_first_" << setnames[i];
+    out_tree->Branch(branch_name_first.str().c_str(),
+		     "std::vector<double>",&(map_xfx[setnames[i]].first));
+    branch_name_second << "xfx_second_" << setnames[i];
+    out_tree->Branch(branch_name_second.str().c_str(),
+		     "std::vector<double>",&(map_xfx[setnames[i]].second));
 
     // Genereate PDF Sets
     //unsigned int k = i+1;
@@ -70,7 +74,7 @@ int main(){
 
   // Loop Over Events
   //for (Long64_t ientry=0; ientry<nentries;ientry++) {
-  for (Long64_t ientry=0; ientry<100000;ientry++) {
+  for (Long64_t ientry=0; ientry<10000;ientry++) {
     if(ientry % 1000 == 0) cout << ientry << endl;
     
     tree->GetEntry(ientry);
@@ -86,13 +90,13 @@ int main(){
     
     for(unsigned int i=0; i < setnames.size(); i++){
       //cout << setnames[i] << endl;
-      map_xfx[ setnames[i] ].clear();
+      map_xfx[ setnames[i] ].first.clear();
+      map_xfx[ setnames[i] ].second.clear();
       for(unsigned int j =0; j < map_pdfs[setnames[i]].size(); j++){
       
 	// Calculates x f(x) at a given x and Q for a certain particle ID
-	map_xfx[ setnames[i] ].push_back(map_pdfs[ setnames[i] ][j]->xfxQ(id_first, x_first, Q));
-	//cout << map_pdfs[ setnames[i] ][j]->xfxQ(id_first, x_first, Q) << endl;
-
+	map_xfx[ setnames[i] ].first.push_back(map_pdfs[ setnames[i] ][j]->xfxQ(id_first, x_first, Q));
+	map_xfx[ setnames[i] ].second.push_back(map_pdfs[ setnames[i] ][j]->xfxQ(id_second, x_second, Q));
       }
 
       /*
