@@ -4,7 +4,6 @@
  * and produce weights.
  */
 
-#include "PDFProducer.h"
 #include "LHAPDF/LHAPDF.h"
 #include "TFile.h"
 #include "TChain.h"
@@ -18,12 +17,13 @@
 using namespace std;
 
 //Root File Information
-const string inRootFileLoc = "/afs/cern.ch/work/c/cranelli/public/WGamGam/ggNtuples/ggtree_mc_ISR.root";
-const string outfilepath = "test.root"; 
+//const string inRootFileLoc = "/afs/cern.ch/work/c/cranelli/public/WGamGam/Acceptances/AnalysisRECOCuts_Skim/LepGammaGammaFinalMu_2015_03_31_ScaleFactors/job_summer12_Wgg_FSR/Job_0000/tree.root";
+const string inRootFileLoc = "/afs/cern.ch/work/c/cranelli/public/WGamGam/Acceptances/CommonFiducial_Skim/ggNtuples_Skim/job_summer12_Wgg_FSR/job_summer12_LNuGG_FSR_CommonFiducialSkim.root";
+const string outfilepath = "tree.root"; 
 const string treeLoc = "ggNtuplizer/EventTree";
 
 //PDF Set Names
-string array_setnames[] = {"cteq6l1", "CT10"};
+string array_setnames[] = {"cteq6l1", "cteq66", "MSTW2008lo68cl"};
 vector<string> setnames (array_setnames, array_setnames + sizeof(array_setnames) / sizeof(string));
 
 int main(){
@@ -37,6 +37,9 @@ int main(){
   tree->SetBranchAddress("pdf", original_pdf, &b_pdf);
 
   TTree * out_tree = new TTree("out_tree", "Contains Parton Distribution calculations for different PDF Sets");
+
+  //Clone Original Tree
+  out_tree = tree->CloneTree(0);
  
   map<string,pair<vector<double>, vector<double> > > map_xfx;
   map<string, vector<LHAPDF::PDF*> > map_pdfs;
@@ -73,8 +76,8 @@ int main(){
 
 
   // Loop Over Events
-  //for (Long64_t ientry=0; ientry<nentries;ientry++) {
-  for (Long64_t ientry=0; ientry<10000;ientry++) {
+  for (Long64_t ientry=0; ientry<nentries;ientry++) {
+  //for (Long64_t ientry=0; ientry<10000;ientry++) {
     if(ientry % 1000 == 0) cout << ientry << endl;
     
     tree->GetEntry(ientry);

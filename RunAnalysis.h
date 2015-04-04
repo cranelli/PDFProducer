@@ -1,5 +1,5 @@
-#ifndef PDFPRODUCER_H
-#define PDFPRODUCER_H
+#ifndef RUNANALYSIS_H
+#define RUNANALYSIS_H
 
 #include "LHAPDF/LHAPDF.h"
 #include "TTree.h"

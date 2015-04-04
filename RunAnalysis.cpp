@@ -4,7 +4,7 @@
  * and produce weights.
  */
 
-#include "PDFProducer.h"
+#include "RunAnalysis.h"
 #include "LHAPDF/LHAPDF.h"
 #include "TFile.h"
 #include "TChain.h"
