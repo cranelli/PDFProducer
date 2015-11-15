@@ -1,11 +1,12 @@
 # Using Script
-./scripts/PDFProducer.sh
+source setup.sh
+python scripts/scheduler.py
 
 # Commands
 source setup.sh
 make
 
-#By Hand
+#By Hand Compiling
 g++ lhapdf_test.cpp -L /cvmfs/cms.cern.ch/slc6_amd64_gcc472/external/lhapdf6/6.1.4/lib/ -l LHAPDF -I /cvmfs/cms.cern.ch/slc6_amd64_gcc472/external/lhapdf6/6.1.4/include/ -o lhapdf_test
 
 
