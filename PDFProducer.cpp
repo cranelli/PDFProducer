@@ -2,6 +2,9 @@
  * C++ Program to read the pdf values from an ntuple,
  * and use LHAPDF to calculate the density functions,
  * and produce weights.
+ *
+ *Example Execution
+ *./PDFProducer.exe "/afs/cern.ch/work/c/cranelli/public/WGamGam/Acceptances/AnalysisRECOCuts_Skim/LepGammaGammaFinalEl_2015_03_31_ScaleFactors/job_summer12_Wgg_FSR/Job_0000/tree.root" "test.root" "ggNtuplizer/EventTree"
  */
 
 #include "LHAPDF/LHAPDF.h"
@@ -17,18 +20,29 @@
 using namespace std;
 
 //Root File Information
-//const string inRootFileLoc = "/afs/cern.ch/work/c/cranelli/public/WGamGam/Acceptances/AnalysisRECOCuts_Skim/LepGammaGammaFinalMu_2015_03_31_ScaleFactors/job_summer12_Wgg_FSR/Job_0000/tree.root";
-const string inRootFileLoc = "/afs/cern.ch/work/c/cranelli/public/WGamGam/Acceptances/CommonFiducial_Skim/ggNtuples_Skim/job_summer12_Wgg_FSR/job_summer12_LNuGG_FSR_CommonFiducialSkim.root";
-const string outfilepath = "tree.root"; 
-const string treeLoc = "ggNtuplizer/EventTree";
+
+//const string inRootFileLoc = "/afs/cern.ch/work/c/cranelli/public/WGamGam/Acceptances/AnalysisRECOCuts_Skim/LepGammaGammaFinalEl_2015_03_31_ScaleFactors/job_summer12_Wgg_FSR/Job_0000/tree.root";
+//const string outfileLoc = "tree.root"; 
+//const string treeLoc = "ggNtuplizer/EventTree";
 
 //PDF Set Names
-string array_setnames[] = {"cteq6l1", "cteq66", "MSTW2008lo68cl"};
+//string array_setnames[] = {"cteq6l1", "cteq66", "MSTW2008lo68cl"};
+string array_setnames[] = {"NNPDF30_nlo_nf_5_pdfas", "CT10nlo", "MSTW2008nlo68cl"};
 vector<string> setnames (array_setnames, array_setnames + sizeof(array_setnames) / sizeof(string));
 
-int main(){
+int main(int argc, char *argv[]){
+  //Catch if the user does not supply enough command line arguments
+  if(argc !=4){
+    cout << "useage: " << argv[0] << " <infilename> <outfilename> <treedir>" << endl;
+    return 0;
+  }
+
+  string inRootFileLoc = argv[1];
+  string outfileLoc = argv[2];
+  string treeLoc = argv[3];
+  
   TFile * infile = TFile::Open(inRootFileLoc.c_str(), "READ");
-  TFile * outfile  = TFile::Open(outfilepath.c_str(), "RECREATE");
+  TFile * outfile  = TFile::Open(outfileLoc.c_str(), "RECREATE");
 
   TTree * tree =(TTree*)infile->Get((inRootFileLoc+":ggNtuplizer/EventTree").c_str());
 

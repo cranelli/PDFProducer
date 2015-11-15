@@ -5,7 +5,7 @@ ROOT_PATH = /afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.07_python2.7/x86_64-slc6-
 ROOTLIBS= $(shell root-config --libs)
 
 all:
-	g++ PDFProducer.cpp -L $(LHAPDF_PATH)/lib $(ROOTLIBS) -l LHAPDF -I $(LHAPDF_PATH)/include/ -I $(ROOT_PATH)/include/ -o PDFProducer
+	g++ PDFProducer.cpp -L $(LHAPDF_PATH)/lib $(ROOTLIBS) -l LHAPDF -I $(LHAPDF_PATH)/include/ -I $(ROOT_PATH)/include/ -o PDFProducer.exe
 
 clean:
-	rm PDFProducer
+	rm PDFProducer.exe
